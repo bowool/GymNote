@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="dialog_save_action_success">"保存动作成功"</string>
+    <string name="dialog_save_action_failed">"保存动作失败，请稍后重试"</string>
+</resources>

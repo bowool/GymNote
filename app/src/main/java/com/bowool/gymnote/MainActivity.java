@@ -13,8 +13,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -26,4 +25,8 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    public void save_action(View view) {
+        Snackbar.make(view, R.string.dialog_save_action_success, Snackbar.LENGTH_LONG)
+                .setAction("Action", null).show();
+    }
 }
