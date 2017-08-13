@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="start_chronometer">"开始"</string>
+    <string name="stop_chronometer">"停止"</string>
+    <string name="chronometer_done">计时完成</string>
+</resources>

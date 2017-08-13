@@ -48,7 +48,7 @@
     <ListView
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:id="@+id/listView"
+        android:id="@+id/chronometer_list"
         app:layout_constraintTop_toTopOf="@+id/percent_50_hor"
         app:layout_constraintLeft_toLeftOf="@+id/percent_50_ver"
         app:layout_constraintRight_toRightOf="parent"
