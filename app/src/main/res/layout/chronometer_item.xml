@@ -22,9 +22,11 @@
         android:id="@+id/time_of_chronometer"
         android:layout_weight="2" />
 
-    <Button
+    <TextView
         android:text="@string/start_chronometer"
         android:layout_width="0dp"
+        android:clickable="true"
+        android:background="@color/buttonBackground"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:gravity="center"

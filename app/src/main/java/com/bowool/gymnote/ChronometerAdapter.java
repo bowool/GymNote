@@ -14,6 +14,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 /**
@@ -22,14 +23,15 @@ import java.util.Date;
  */
 
 class ChronometerAdapter extends ArrayAdapter <Integer>{
-    Integer mTime ;
+    ArrayList <Integer> mTimes = new ArrayList<>() ;
     Context mContext;
     private int resourceId;
     TextView chronometerView;
-    Button switchOfChronometer;
+    TextView switchOfChronometer;
     EditText timeToSet;
-    Chronometer mChronometer;
-    boolean isRunning = false;
+
+    ArrayList <View> views = new ArrayList<>();
+    ArrayList <Chronometer> chronometers = new ArrayList<>();
     final String TAG="GymNote.Chronometer";
     ChronometerAdapter(Context context, int resource, Integer[] obj) {
         super(context, resource, obj);
@@ -38,71 +40,41 @@ class ChronometerAdapter extends ArrayAdapter <Integer>{
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        mTime = getItem(position);
-        View view = LayoutInflater.from(getContext()).inflate(resourceId , parent ,false);
-        switchOfChronometer = view.findViewById(R.id.switch_of_chronometer);
-        chronometerView = view.findViewById(R.id.view_of_chronometer);
-        timeToSet = view.findViewById(R.id.time_of_chronometer);
+    public View getView(final int position, View convertView, ViewGroup parent) {
+        if (position >= views.size()){
+            views.add(position , LayoutInflater.from(getContext()).inflate(resourceId , parent ,false));
 
-        timeToSet.setText(mTime.toString());//设置当前计时器默认值
-        chronometerView.setText(new SimpleDateFormat("mm:ss.SSS").format(new Date(0)));//设置当前计时器默认时间
-        switchOfChronometer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mTime =Integer.valueOf(timeToSet.getText().toString());//每次读取计时器当前默认值
+            switchOfChronometer = views.get(position).findViewById(R.id.switch_of_chronometer);
+            chronometerView = views.get(position).findViewById(R.id.view_of_chronometer);
+            timeToSet = views.get(position).findViewById(R.id.time_of_chronometer);
 
-                onSwitch();
-            }
-        });
-        return view;
+
+
+            mTimes.add(position,getItem(position));
+            Log.d(TAG,"mTimer :getItem"+mTimes.get(position));
+            chronometerView.setText(new SimpleDateFormat("mm:ss.SSS").format(new Date(mTimes.get(position) *1000)));//设置当前计时器默认时间
+            timeToSet.setText(mTimes.get(position).toString());//设置当前计时器默认值
+
+            chronometers.add(position,new Chronometer(chronometerView,switchOfChronometer,mTimes.get(position)));
+
+            switchOfChronometer.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mTimes.set(position,Integer.valueOf(timeToSet.getText().toString()));//每次读取计时器当前默认值 //TODO:wrong
+                    Log.d(TAG,"mTimer :switch"+mTimes.get(position) + "position "+position);
+                    chronometers.get(position).setTimer(mTimes.get(position));
+                    chronometers.get(position).onSwitch();
+                }
+            });
+
+
+        }
+
+
+
+        return views.get(position);
     }
-    private void onSwitch(){
-        if(isRunning){
-            mChronometer.cancel();
-            switchOfChronometer.setText(R.string.start_chronometer);
-            mChronometer = null;
-        }else{
-            mChronometer =new Chronometer(mTime * 1000,100);
-            switchOfChronometer.setText(R.string.stop_chronometer);
-            mChronometer.start();
-        }
-        isRunning = !isRunning;
-
-    }
-
-    class Chronometer extends CountDownTimer {
-        /**
-         *
-         * @param millisInFuture
-         *            表示以毫秒为单位 倒计时的总数
-         *
-         *            例如 millisInFuture=1000 表示1秒
-         *
-         * @param countDownInterval
-         *            表示 间隔 多少微秒 调用一次 onTick 方法
-         *
-         *            例如: countDownInterval =1000 ; 表示每1000毫秒调用一次onTick()
-         *
-         */
 
 
-
-        public Chronometer(long millisInFuture, long countDownInterval) {
-            super(millisInFuture, countDownInterval);
-        }
-
-
-        @Override
-        public void onFinish() {
-            chronometerView.setText(R.string.chronometer_done);
-        }
-
-        @Override
-        public void onTick(long millisUntilFinished) {
-            Log.i(TAG, millisUntilFinished + "");
-            chronometerView.setText(new SimpleDateFormat("mm:ss.SSS").format(new Date(millisUntilFinished)));
-        }
-    }
 }
 

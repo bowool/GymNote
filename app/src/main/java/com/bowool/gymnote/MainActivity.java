@@ -17,7 +17,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Integer [] defaultChronometer = { 30};
+        Integer [] defaultChronometer = { 30 , 60 , 90};
         ChronometerAdapter chronometerAdapter = new ChronometerAdapter(this,R.layout.chronometer_item,defaultChronometer);
         ListView chronometerList =(ListView) findViewById(R.id.chronometer_list);
         chronometerList.setAdapter(chronometerAdapter);
