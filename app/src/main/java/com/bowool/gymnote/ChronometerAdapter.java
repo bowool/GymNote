@@ -26,9 +26,6 @@ class ChronometerAdapter extends ArrayAdapter <Integer>{
     ArrayList <Integer> mTimes = new ArrayList<>() ;
     Context mContext;
     private int resourceId;
-    TextView chronometerView;
-    TextView switchOfChronometer;
-    EditText timeToSet;
 
     ArrayList <View> views = new ArrayList<>();
     ArrayList <Chronometer> chronometers = new ArrayList<>();
@@ -44,9 +41,9 @@ class ChronometerAdapter extends ArrayAdapter <Integer>{
         if (position >= views.size()){
             views.add(position , LayoutInflater.from(getContext()).inflate(resourceId , parent ,false));
 
-            switchOfChronometer = views.get(position).findViewById(R.id.switch_of_chronometer);
-            chronometerView = views.get(position).findViewById(R.id.view_of_chronometer);
-            timeToSet = views.get(position).findViewById(R.id.time_of_chronometer);
+            TextView switchOfChronometer = views.get(position).findViewById(R.id.switch_of_chronometer);
+            TextView chronometerView = views.get(position).findViewById(R.id.view_of_chronometer);
+            EditText timeToSet = views.get(position).findViewById(R.id.time_of_chronometer);
 
 
 
@@ -60,7 +57,9 @@ class ChronometerAdapter extends ArrayAdapter <Integer>{
             switchOfChronometer.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    mTimes.set(position,Integer.valueOf(timeToSet.getText().toString()));//每次读取计时器当前默认值 //TODO:wrong
+                    mTimes.set(position,Integer.valueOf(
+                            ((EditText)views.get(position).findViewById(R.id.time_of_chronometer))
+                                    .getText().toString()));//每次读取计时器当前默认值
                     Log.d(TAG,"mTimer :switch"+mTimes.get(position) + "position "+position);
                     chronometers.get(position).setTimer(mTimes.get(position));
                     chronometers.get(position).onSwitch();
