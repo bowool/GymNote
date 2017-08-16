@@ -1,14 +1,20 @@
 package com.bowool.gymnote;
 
+import android.nfc.Tag;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 
+import org.litepal.crud.DataSupport;
+import org.litepal.tablemanager.Connector;
+
+import java.util.Date;
 import java.util.List;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -36,5 +42,23 @@ public class MainActivity extends AppCompatActivity {
     public void save_action(View view) {
         Snackbar.make(view, R.string.dialog_save_action_success, Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show();
+    }
+
+    public void getdatabase(View view) {//TODO:debug app ,need to delete
+        Connector.getDatabase();
+        ExerciseRecord exerciseRecord =new ExerciseRecord();
+        exerciseRecord.setActionName("卧推");
+        exerciseRecord.setTrainDay(new Date());
+        exerciseRecord.save();
+
+        List<ExerciseRecord> ext = DataSupport.findAll(ExerciseRecord.class);
+        for (ExerciseRecord saq :ext)
+        {
+            Log.d("bowool",saq.getActionName());
+        }
+    }
+
+    public void deletedatabase(View view) {//TODO:debug app ,need to delete
+        DataSupport.deleteAll(ExerciseRecord.class);
     }
 }

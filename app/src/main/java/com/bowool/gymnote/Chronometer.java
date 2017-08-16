@@ -1,8 +1,6 @@
 package com.bowool.gymnote;
 
 import android.os.CountDownTimer;
-import android.util.Log;
-import android.view.View;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
@@ -14,6 +12,7 @@ import java.util.Date;
 
 public class Chronometer {
     final String TAG="GymNote.Chronometer";
+    final int TIME_INTERVAL = 71;
     TextView chronometerView;
     TextView switchOfChronometer;
     boolean isRunning = false;
@@ -35,7 +34,7 @@ public class Chronometer {
             switchOfChronometer.setText(R.string.start_chronometer);
             mChronometer = null;
         }else{
-            mChronometer =new Clock(mTimer * 1000,256);
+            mChronometer =new Clock(mTimer * 1000,TIME_INTERVAL);
             switchOfChronometer.setText(R.string.stop_chronometer);
             mChronometer.start();
         }
