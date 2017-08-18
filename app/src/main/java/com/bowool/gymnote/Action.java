@@ -1,11 +1,14 @@
 package com.bowool.gymnote;
 
+import android.util.Log;
+
 import org.litepal.crud.DataSupport;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
- * Created by bowoo on 2017/8/16.
+ * Created by bowool on 2017/8/16.
  */
 
 public class Action extends DataSupport {
@@ -26,5 +29,20 @@ public class Action extends DataSupport {
 
     public void setExerciseParts(ArrayList<String> exerciseParts) {
         this.exerciseParts = exerciseParts;
+    }
+    public void setExerciseParts(String[] exerciseParts) {
+        setExerciseParts(new ArrayList<>(Arrays.asList(exerciseParts)));
+    }
+
+    @Override
+    public synchronized boolean save() {
+        Log.d("bowool","save action base : "+this.toString());
+        return super.save();
+    }
+
+    @Override
+    public String toString() {
+        return getActionName()+getExerciseParts().toString();
+
     }
 }
