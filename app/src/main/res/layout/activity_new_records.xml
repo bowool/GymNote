@@ -15,7 +15,7 @@
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.5"
         tools:layout_editor_absoluteY="0dp"
-        tools:layout_editor_absoluteX="206dp" />
+        tools:layout_editor_absoluteX="192dp" />
 
     <android.support.constraint.Guideline
         android:layout_width="wrap_content"
@@ -23,7 +23,7 @@
         android:id="@+id/percent_50_hor"
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.5"
-        tools:layout_editor_absoluteY="330dp"
+        tools:layout_editor_absoluteY="284dp"
         tools:layout_editor_absoluteX="0dp" />
     <android.support.constraint.Guideline
     android:layout_width="wrap_content"
@@ -31,7 +31,7 @@
     android:id="@+id/percent_90_hor"
     android:orientation="horizontal"
     app:layout_constraintGuide_percent="0.9"
-    tools:layout_editor_absoluteY="593dp"
+    tools:layout_editor_absoluteY="510dp"
     tools:layout_editor_absoluteX="0dp" />
     <android.support.constraint.Guideline
         android:layout_width="wrap_content"
@@ -39,7 +39,7 @@
         android:id="@+id/percent_10_hor"
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.1"
-        tools:layout_editor_absoluteY="66dp"
+        tools:layout_editor_absoluteY="57dp"
         tools:layout_editor_absoluteX="0dp" />
 
     <ListView
@@ -89,14 +89,11 @@
         android:layout_marginTop="16dp"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ListView
+    <ViewSwitcher
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_gravity="center"
-        android:gravity ="center_vertical"
-        android:layout_centerVertical="true"
 
-        app:layout_constraintTop_toTopOf="@+id/percent_10_hor"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/percent_50_hor"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintLeft_toLeftOf="@+id/percent_50_ver"
@@ -115,35 +112,17 @@
         app:layout_constraintRight_toLeftOf="@+id/percent_50_ver"
         android:id="@+id/action_container" />
 
-    <Button
-        android:text="setActionDatabase"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/button"
-        android:onClick="setActionDatabase"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@+id/action_container"
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:id="@+id/action_view_title"
+        android:gravity="center"
+        app:layout_constraintTop_toTopOf="parent"
         android:layout_marginStart="16dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@+id/percent_50_ver"
         android:layout_marginEnd="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/percent_90_hor"
-        android:layout_marginBottom="8dp" />
-
-    <Button
-        android:text="deletedatabase"
-        android:onClick="deletedatabase"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/button3"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@+id/button"
-        android:layout_marginStart="16dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@+id/chronometer_list"
-        android:layout_marginEnd="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/percent_90_hor"
-        android:layout_marginBottom="8dp" />
+        app:layout_constraintBottom_toTopOf="@+id/percent_10_hor" />
 
 
 </android.support.constraint.ConstraintLayout>

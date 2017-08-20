@@ -8,7 +8,7 @@ import java.util.Date;
  */
 
 public class DateManager {
-    public long daysBetweenTwoDates(Date earlyDay, Date lateDay) {
+    static public long daysBetweenTwoDates(Date earlyDay, Date lateDay) {
 
 
         Calendar startCalendar = Calendar.getInstance();
@@ -19,5 +19,8 @@ public class DateManager {
         long diff = lateCalendar.getTimeInMillis() - startCalendar.getTimeInMillis();
 
         return diff / (24 * 60 * 60 * 1000);
+    }
+    static public long dayToNow(Date earlyDay){
+        return daysBetweenTwoDates(earlyDay,new Date());
     }
 }

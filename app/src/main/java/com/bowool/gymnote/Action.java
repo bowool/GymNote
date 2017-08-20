@@ -6,6 +6,7 @@ import org.litepal.crud.DataSupport;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 
 /**
  * Created by bowool on 2017/8/16.
@@ -13,7 +14,41 @@ import java.util.Arrays;
 
 public class Action extends DataSupport {
     private String actionName;
-    private ArrayList <String> exerciseParts;
+    private String exerciseParts;
+    private  ArrayList<ExerciseRecord> exerciseRecords = new ArrayList<ExerciseRecord>();
+    private int id;
+
+    public Action(String actionName, String exerciseParts) {
+        this.actionName = actionName;
+        this.exerciseParts = exerciseParts;
+    }
+    public Action(String actionName, String[] exerciseParts) {
+        this.actionName = actionName;
+        String exercisePartsTmp = null;
+        for(String tmp :exerciseParts){
+            if (exercisePartsTmp == null){
+                exercisePartsTmp = tmp;
+            }else{
+                exercisePartsTmp = exercisePartsTmp + ","+tmp;
+            }
+        }
+        this.exerciseParts = exercisePartsTmp;
+    }
+
+    public Action(String actionName, ArrayList<String> exerciseParts) {
+        this.actionName = actionName;
+        String exercisePartsTmp = null;
+        for(String tmp :exerciseParts){
+            if (exercisePartsTmp == null){
+                exercisePartsTmp = tmp;
+            }else{
+                exercisePartsTmp = exercisePartsTmp + ","+tmp;
+            }
+        }
+        this.exerciseParts = exercisePartsTmp;
+    }
+
+    public Action() {}
 
     public String getActionName() {
         return actionName;
@@ -23,26 +58,37 @@ public class Action extends DataSupport {
         this.actionName = actionName;
     }
 
+
     public ArrayList<String> getExerciseParts() {
-        return exerciseParts;
+        return new ArrayList<>(Arrays.asList(exerciseParts.split(",")));
     }
 
-    public void setExerciseParts(ArrayList<String> exerciseParts) {
+    public void setExerciseParts(String exerciseParts) {
         this.exerciseParts = exerciseParts;
-    }
-    public void setExerciseParts(String[] exerciseParts) {
-        setExerciseParts(new ArrayList<>(Arrays.asList(exerciseParts)));
     }
 
     @Override
     public synchronized boolean save() {
-        Log.d("bowool","save action base : "+this.toString());
+        Log.d("gymnote","save action base : "+this.toString());
         return super.save();
     }
 
     @Override
     public String toString() {
-        return getActionName()+getExerciseParts().toString();
+        return id +" "+ actionName + " " + exerciseParts;
 
     }
+
+    public int getId() {
+        return id;
+    }
+
+    public ArrayList<ExerciseRecord> getExerciseRecords() {
+        return new ArrayList (DataSupport.where("action_id = ?", String.valueOf(id)).find(ExerciseRecord.class));
+    }
+
+    public void setExerciseRecords(ArrayList<ExerciseRecord> exerciseRecords) {
+        this.exerciseRecords = exerciseRecords;
+    }
+
 }
