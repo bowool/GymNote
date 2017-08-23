@@ -16,6 +16,7 @@ public class Action extends DataSupport {
     private String actionName;
     private String exerciseParts;
     private  ArrayList<ExerciseRecord> exerciseRecords = new ArrayList<ExerciseRecord>();
+    private Date lastTrainDay;
     private int id;
 
     public Action(String actionName, String exerciseParts) {
@@ -91,4 +92,11 @@ public class Action extends DataSupport {
         this.exerciseRecords = exerciseRecords;
     }
 
+    public Date getLastTrainDay() {
+        return lastTrainDay;
+    }
+
+    public void setLastTrainDay(Date lastTrainDay) {
+        this.lastTrainDay = lastTrainDay;
+    }
 }

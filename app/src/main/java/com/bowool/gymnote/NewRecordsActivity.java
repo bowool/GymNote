@@ -1,6 +1,9 @@
 package com.bowool.gymnote;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -14,12 +17,14 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
 import org.litepal.crud.DataSupport;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -32,12 +37,16 @@ public class NewRecordsActivity extends AppCompatActivity {
     ViewSwitcher historySwitcher;
     Context mContext;
     final String TAG = "gymnote.NewRecordsAct";
+    private android.view.ViewGroup mRoot;
+    ArrayList <ArrayList> trainRecordsToday;
+    private ViewSwitcher recordsSwitcher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_records);
         mContext=getBaseContext();
+        mRoot =(ViewGroup) getWindow().getDecorView().findViewById(android.R.id.content);
 
         /*chronometer list creator begin*/
         Integer [] defaultChronometer = { 30 , 60 , 90};
@@ -84,15 +93,35 @@ public class NewRecordsActivity extends AppCompatActivity {
             @Override
             public View makeView()
             {
-                return LayoutInflater.from(mContext).inflate(R.layout.history_view,(ViewGroup) getWindow().getDecorView().findViewById(android.R.id.content),
+                return LayoutInflater.from(mContext).inflate(R.layout.history_view,mRoot,
                         false);
             }
         });
         // 页面加载时先显示空
         showHistory(null);
-
-
         /*history list creator end*/
+
+        /*Operator station begin*/
+        trainRecordsToday = new ArrayList<>();
+        for (int i = 0 ; i  < actionToday.size() ; i++)
+            trainRecordsToday.add(new ArrayList<TrainRecord>());
+
+
+        recordsSwitcher = (ViewSwitcher) findViewById(R.id.record_train);
+        recordsSwitcher.setFactory(new ViewSwitcher.ViewFactory()
+        {
+            // 实际上就是返回一个view
+            @Override
+            public View makeView()
+            {
+                return LayoutInflater.from(mContext).inflate(R.layout.records_view,mRoot,
+                        false);
+            }
+        });
+        showRecords(null);
+
+
+        /*Operator station end*/
 
 
 
@@ -127,7 +156,7 @@ public class NewRecordsActivity extends AppCompatActivity {
                 showList . add(tr.getWeight() + "KG * " + tr.getCount() + "组"); //// TODO: 2017/8/20 格式转换
             }
 
-           ListView historyList = viewToShow.findViewById(R.id.history_list);
+            ListView historyList = viewToShow.findViewById(R.id.history_list);
             historyList.setVisibility(View.VISIBLE);
             ArrayAdapter<String> adapter = new ArrayAdapter<String>(
                     this,android.R.layout.simple_list_item_1, (String[]) showList.toArray(new String[showList.size()]));
@@ -151,20 +180,51 @@ public class NewRecordsActivity extends AppCompatActivity {
 
     }
 
+    public void showRecords(Action action){
+        Log.d(TAG,"showRecords : "+action);
+        View viewToShow =recordsSwitcher.getNextView();
+        if (action == null){
+            SpannableStringBuilder text= new SpannableStringBuilder(getString(R.string.history_empty));
+            text.setSpan(new AbsoluteSizeSpan(60), 0, text.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+            viewToShow.findViewById(R.id.records_list).setVisibility(View.GONE);
+            TextView tv = viewToShow.findViewById(R.id.records_finished);
+            tv.setText(text);
+            tv.setGravity(Gravity.CENTER);
+            recordsSwitcher.showNext();
+        }else{
+            trainRecordsToday.get(actionToday.indexOf(action));
+
+            ArrayList<String>  showList =new ArrayList<>();
+            for ( TrainRecord tr : (ArrayList<TrainRecord>) trainRecordsToday.get(flagActionSelect)){
+                showList . add(tr.getWeight() + "KG * " + tr.getCount() + "组"); //// TODO: 2017/8/20 格式转换
+                Log.d(TAG, "showRecords: tr = "+tr);
+            }
+            ListView historyList = viewToShow.findViewById(R.id.records_list);
+            historyList.setVisibility(View.VISIBLE);
+            ArrayAdapter<String> adapter = new ArrayAdapter<String>(
+                    this,android.R.layout.simple_list_item_1, (String[]) showList.toArray(new String[showList.size()]));
+            historyList.setAdapter(adapter);
+            Log.d(TAG, "showRecords: "+action.getActionName());
+            recordsSwitcher.showNext();
+
+        }
+
+    }
     //左上角 动作列表 监听器
-    int flagActionBefore = -1;
+    int flagActionSelect = -1;
     void setActionListClick(){
         actionList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                if (flagActionBefore != -1){
+                if (flagActionSelect != -1){
                     if (hasFinished(i)){
-                        actionAdapter.setItemFinished(flagActionBefore);
+                        actionAdapter.setItemFinished(flagActionSelect);
                     }else{
-                        actionAdapter.setItemNoFinished(flagActionBefore);
+                        actionAdapter.setItemNoFinished(flagActionSelect);
                     }
                 }
-                flagActionBefore =i;
+                flagActionSelect =i;
                 actionAdapter.setItemSelected(i);
                 showHistory(actionToday.get(i));
             }
@@ -178,9 +238,102 @@ public class NewRecordsActivity extends AppCompatActivity {
     public void save_action(View view) {
         Snackbar.make(view, R.string.dialog_save_action_success, Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show();
+
+        showDialogOfItem();
     }
 
+    double weightOfNewItem;
+    int timesOfNewItem;
+    void showDialogOfItem(){
 
+        AlertDialog.Builder dialog=new AlertDialog.Builder(this);
+        View v = LayoutInflater.from(this).inflate(R.layout.add_item_dialog,null);
+
+        PickerView minute_pv =v.findViewById(R.id.picker_one);
+        PickerView second_pv =v.findViewById(R.id.picker_two);
+
+        List<String> dataWeight = new ArrayList<String>();
+        List<String> dataTimes = new ArrayList<String>();
+        for (double i = 0,j = 2.5; j < 100; i++)
+        {
+            if(j < 30)
+                j = j + 2.5;
+            else
+                j = j + 5;
+
+            dataWeight.add(j + "");
+        }
+        for (int i = 0; i < 30; i++)
+        {
+            dataTimes.add(i + "");
+        }
+        minute_pv.setData(dataWeight);
+        minute_pv.setOnSelectListener(new PickerView.onSelectListener()
+        {
+
+            @Override
+            public void onSelect(String text)
+            {
+                Toast.makeText(NewRecordsActivity.this, "选择了 " + text + " 重",
+                        Toast.LENGTH_SHORT).show();
+                weightOfNewItem = Double.valueOf(text);
+            }
+        });
+        second_pv.setData(dataTimes);
+        second_pv.setOnSelectListener(new PickerView.onSelectListener()
+        {
+
+            @Override
+            public void onSelect(String text)
+            {
+                Toast.makeText(NewRecordsActivity.this, "选择了 " + text + " 组",
+                        Toast.LENGTH_SHORT).show();
+                timesOfNewItem = Integer.valueOf(text);
+            }
+        });
+
+        dialog.setPositiveButton("取消", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Toast.makeText(NewRecordsActivity.this,"继续浏览精彩内容",Toast.LENGTH_SHORT).show();
+            }
+        });
+        dialog.setNeutralButton("手动输入", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Toast.makeText(NewRecordsActivity.this,"起来活动活动吧" ,Toast.LENGTH_SHORT).show();
+            }
+        });
+        dialog.setNegativeButton("确定", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Toast.makeText(NewRecordsActivity.this,"欢迎下次使用", Toast.LENGTH_SHORT).show();
+                saveTrainRecord();
+            }
+        });
+
+        dialog.setView(v);
+        Dialog ab = dialog.create();
+        ab.show();
+
+        WindowManager manager = getWindowManager();
+        Display d = manager.getDefaultDisplay();
+        Window window = ab.getWindow();
+        WindowManager.LayoutParams params = window.getAttributes();
+        params.height = (int) (d.getHeight() * 0.5);
+        params.gravity = Gravity.CENTER_HORIZONTAL;
+        ab.getWindow().setAttributes(params);
+
+
+    }
+
+    private void saveTrainRecord() {
+        trainRecordsToday.get(flagActionSelect).add(new TrainRecord(weightOfNewItem,timesOfNewItem));
+        showRecords(actionToday.get(flagActionSelect));
+    }
 
 
     public void getdatabase( ) {//TODO:debug app ,need to delete

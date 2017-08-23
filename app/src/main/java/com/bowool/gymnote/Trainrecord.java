@@ -7,16 +7,20 @@ import org.litepal.crud.DataSupport;
  */
 
 public class TrainRecord extends DataSupport {
-    private int weight;
+    private double weight;
     private int count;
     private int id ;
 
-    public TrainRecord(int weight, int count) {
+    public TrainRecord(double weight, int count) {
         this.weight = weight;
         this.count = count;
     }
 
-    public int getWeight() {
+    public TrainRecord() {
+
+    }
+
+    public double getWeight() {
         return weight;
     }
 

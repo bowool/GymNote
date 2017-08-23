@@ -42,15 +42,6 @@
         tools:layout_editor_absoluteY="57dp"
         tools:layout_editor_absoluteX="0dp" />
 
-    <ListView
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:id="@+id/chronometer_list"
-        app:layout_constraintTop_toTopOf="@+id/percent_50_hor"
-        app:layout_constraintLeft_toLeftOf="@+id/percent_50_ver"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/percent_90_hor" />
-
     <Button
         android:text="@string/save_action"
         android:layout_width="wrap_content"
@@ -123,6 +114,25 @@
         app:layout_constraintRight_toLeftOf="@+id/percent_50_ver"
         android:layout_marginEnd="8dp"
         app:layout_constraintBottom_toTopOf="@+id/percent_10_hor" />
+
+    <ListView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:id="@+id/chronometer_list"
+        app:layout_constraintTop_toTopOf="@+id/percent_50_hor"
+        app:layout_constraintLeft_toLeftOf="@+id/percent_50_ver"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/percent_90_hor" />
+
+    <ViewSwitcher
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:id="@+id/record_train"
+        app:layout_constraintTop_toBottomOf="@+id/action_container"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintVertical_bias="0.17000002"
+        app:layout_constraintRight_toLeftOf="@+id/chronometer_list"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
 
 </android.support.constraint.ConstraintLayout>
