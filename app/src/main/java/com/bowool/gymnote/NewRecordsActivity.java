@@ -62,8 +62,9 @@ public class NewRecordsActivity extends AppCompatActivity {
         Date lastTrainDay =new Date();
         for(Action ac :acs){
             if(ac.getExerciseParts().contains(exercisePart)){
-                Date day = ac.getExerciseRecords().get(ac.getExerciseRecords().size() - 1 ).getTrainDay();
-                lastTrainDay = day.before(lastTrainDay) ?  day : lastTrainDay;
+                if(ac.getExerciseRecords().get(ac.getExerciseRecords().size() - 1 ) != null){
+                    Date day = ac.getExerciseRecords().get(ac.getExerciseRecords().size() - 1 ).getTrainDay();
+                    lastTrainDay = day.before(lastTrainDay) ?  day : lastTrainDay;}
             }
         }
 
