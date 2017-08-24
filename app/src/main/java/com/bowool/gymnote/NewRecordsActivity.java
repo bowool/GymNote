@@ -150,7 +150,7 @@ public class NewRecordsActivity extends AppCompatActivity {
             historySwitcher.showNext();
         }else{
             List<ExerciseRecord>exRd =  DataSupport.where("action_id = ?", String.valueOf(action.getId())).find(ExerciseRecord.class,true);
-            ExerciseRecord ex = exRd.get(0);
+            ExerciseRecord ex = exRd.get(0);///// TODO: exRd.size() == 0 ?
             Log.d(TAG, "showHistory: exRd : "+ exRd + "ex :"+ex);
             ArrayList<String>  showList =new ArrayList<>();
             for ( TrainRecord tr :ex.getTrainRecords()){
