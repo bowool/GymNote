@@ -12,8 +12,7 @@
         android:id="@+id/history_action_name"
         android:layout_weight="1"
         android:layout_gravity="center_vertical|left"
-        android:gravity="center_vertical|left"
-        android:background="@color/buttonBackground"/>
+        android:gravity="center_vertical|left" />
 
     <ListView
         android:layout_width="match_parent"

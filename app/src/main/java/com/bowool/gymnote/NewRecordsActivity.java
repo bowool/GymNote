@@ -8,13 +8,18 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
+import android.text.TextPaint;
+import android.text.TextWatcher;
 import android.text.style.AbsoluteSizeSpan;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.*;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -55,7 +60,7 @@ public class NewRecordsActivity extends AppCompatActivity {
         chronometerList.setAdapter(chronometerAdapter);
         /*chronometer list creator end*/
 
-        /*action list creator begin*/
+        /*action Title  creator begin*/
         TextView actionListTitle = (TextView)findViewById(R.id.action_view_title);
         String exercisePart = "胸";//// TODO: 2017/8/20 上一个界面写好之后以Intent传入的替换，如果可以，将最近锻炼时间放到上一个界面加载
         List<Action>acs =  DataSupport.findAll(Action.class);
@@ -67,8 +72,6 @@ public class NewRecordsActivity extends AppCompatActivity {
                     lastTrainDay = day.before(lastTrainDay) ?  day : lastTrainDay;}
             }
         }
-
-
         long dayToNow = DateManager.dayToNow(lastTrainDay);
         SpannableStringBuilder recordText= new SpannableStringBuilder(exercisePart);
         recordText.setSpan(new AbsoluteSizeSpan(100), 0, recordText.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -77,8 +80,10 @@ public class NewRecordsActivity extends AppCompatActivity {
         dayToNowString.setSpan(new AbsoluteSizeSpan(50), 0, dayToNowString.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
         actionListTitle.setText(recordText.append(dayToNowString));
+        /*action Title  creator begin*/
 
 
+        /*action list creator begin*/
         getdatabase();//// TODO: 2017/8/19 for debug
         actionList =(ListView) findViewById(R.id.action_container);
         actionAdapter =new ActionAdapter(this ,R.layout.action_item,actionToday);
@@ -151,17 +156,24 @@ public class NewRecordsActivity extends AppCompatActivity {
             List<ExerciseRecord>exRd =  DataSupport.where("action_id = ?", String.valueOf(action.getId())).find(ExerciseRecord.class,true);
             if (exRd.size() != 0){
 
-                ExerciseRecord ex = exRd.get(0);///// TODO: exRd.size() == 0 ?
+                ExerciseRecord ex = exRd.get(exRd.size() - 1);
                 Log.d(TAG, "showHistory: exRd : "+ exRd + "ex :"+ex);
                 ArrayList<String>  showList =new ArrayList<>();
                 for ( TrainRecord tr :ex.getTrainRecords()){
-                    showList . add(tr.getWeight() + "KG * " + tr.getCount() + "组"); //// TODO: 2017/8/20 格式转换
+                    showList . add(tr.getWeight() + getResources().getString(R.string.weight_unit) + " * " +
+                            tr.getCount() + getResources().getString(R.string.times_unit)); //// TODO: More: 字体转换
                 }
 
                 ListView historyList = viewToShow.findViewById(R.id.history_list);
                 historyList.setVisibility(View.VISIBLE);
                 ArrayAdapter<String> adapter = new ArrayAdapter<String>(
-                        this,android.R.layout.simple_list_item_1, (String[]) showList.toArray(new String[showList.size()]));
+                        this,android.R.layout.simple_list_item_1, (String[]) showList.toArray(new String[showList.size()])){
+                    public View getView(int position, View convertView, ViewGroup parent) {
+                        View view   =  super.getView(position, convertView, parent);
+                        ((TextView)view).setGravity(Gravity.CENTER);
+                        return view;
+                    }
+                };
                 historyList.setAdapter(adapter);
 
                 TextView tv = viewToShow.findViewById(R.id.history_action_name);
@@ -195,7 +207,7 @@ public class NewRecordsActivity extends AppCompatActivity {
         Log.d(TAG,"showRecords : "+action);
         View viewToShow =recordsSwitcher.getNextView();
         if (action == null){
-            SpannableStringBuilder text= new SpannableStringBuilder(getString(R.string.history_empty));
+            SpannableStringBuilder text= new SpannableStringBuilder(getString(R.string.records_empty));
             text.setSpan(new AbsoluteSizeSpan(60), 0, text.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
             viewToShow.findViewById(R.id.records_list).setVisibility(View.GONE);
@@ -207,15 +219,35 @@ public class NewRecordsActivity extends AppCompatActivity {
             trainRecordsToday.get(actionToday.indexOf(action));
             ArrayList<String>  showList =new ArrayList<>();
             for ( TrainRecord tr : (ArrayList<TrainRecord>) trainRecordsToday.get(flagActionSelect)){
-                showList . add(tr.getWeight() + "KG * " + tr.getCount() + "组"); //// TODO: 2017/8/20 格式转换
+                showList . add(tr.getWeight() +
+                        getResources().getString(R.string.weight_unit) + " * " +
+                        tr.getCount() + getResources().getString(R.string.times_unit)); //// TODO: More: 字体转换
                 Log.d(TAG, "showRecords: tr = "+tr);
             }
             ListView historyList = viewToShow.findViewById(R.id.records_list);
             historyList.setVisibility(View.VISIBLE);
             ArrayAdapter<String> adapter = new ArrayAdapter<String>(
-                    this,android.R.layout.simple_list_item_1, (String[]) showList.toArray(new String[showList.size()]));
+                    this,android.R.layout.simple_list_item_1, (String[]) showList.toArray(new String[showList.size()])){
+                public View getView(int position, View convertView, ViewGroup parent) {
+                    View view   =  super.getView(position, convertView, parent);
+                    ((TextView)view).setGravity(Gravity.CENTER);
+                    return view;
+                }
+            };
             historyList.setAdapter(adapter);
             Log.d(TAG, "showRecords: "+action.getActionName());
+            TextView tv = viewToShow.findViewById(R.id.records_finished);
+            tv.setText(getResources().getString(R.string.new_records));
+            TextPaint paint = tv.getPaint();
+            paint.setFakeBoldText(true);
+            tv.setGravity(Gravity.CENTER);
+            tv.setTextSize(TypedValue.COMPLEX_UNIT_PX,60);
+            tv.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    showDialogOfItem(view);
+                }
+            });
             recordsSwitcher.showNext();
         }
     }
@@ -235,6 +267,7 @@ public class NewRecordsActivity extends AppCompatActivity {
                 flagActionSelect =i;
                 actionAdapter.setItemSelected(i);
                 showHistory(actionToday.get(i));
+                showRecords(actionToday.get(i));
             }
         });
 
@@ -244,16 +277,29 @@ public class NewRecordsActivity extends AppCompatActivity {
     }
 
     public void save_action(View view) {
+        for(Action action :actionToday){
+            ArrayList tmpTrain = trainRecordsToday.get(actionToday.indexOf(action));
+            if (tmpTrain.size() != 0){
+                ExerciseRecord newExerciseRecord = new ExerciseRecord(new Date());
+                for(TrainRecord train : (ArrayList <TrainRecord>) tmpTrain){
+                    train.save();
+                    newExerciseRecord.addTrainRecord(train);
+                }
+                newExerciseRecord.save();
+                action.addExerciseRecord(newExerciseRecord);
+                action.save();
+            }
+        }
+
         Snackbar.make(view, R.string.dialog_save_action_success, Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show();
 
-        showDialogOfItem();
     }
 
     double weightOfNewItem;
     int timesOfNewItem;
 
-    void showDialogOfItem(){
+    public void showDialogOfItem(View view){
 
         AlertDialog.Builder dialog=new AlertDialog.Builder(this);
         View v = LayoutInflater.from(this).inflate(R.layout.add_item_dialog,null);
@@ -315,22 +361,19 @@ public class NewRecordsActivity extends AppCompatActivity {
         dialog.setPositiveButton("取消", new DialogInterface.OnClickListener() {
 
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-                Toast.makeText(NewRecordsActivity.this,"继续浏览精彩内容",Toast.LENGTH_SHORT).show();
-            }
+            public void onClick(DialogInterface dialog, int which) {}
         });
         dialog.setNeutralButton("手动输入", new DialogInterface.OnClickListener() {
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Toast.makeText(NewRecordsActivity.this,"起来活动活动吧" ,Toast.LENGTH_SHORT).show();
+                showDialogOfItemManual();
             }
         });
         dialog.setNegativeButton("确定", new DialogInterface.OnClickListener() {
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Toast.makeText(NewRecordsActivity.this,"欢迎下次使用", Toast.LENGTH_SHORT).show();
                 saveTrainRecord();
             }
         });
@@ -349,7 +392,67 @@ public class NewRecordsActivity extends AppCompatActivity {
 
 
     }
-    void showDialogOfItemManual(){}
+    void showDialogOfItemManual(){
+        AlertDialog.Builder dialog=new AlertDialog.Builder(this);
+        View v = LayoutInflater.from(this).inflate(R.layout.add_item_manual_dialog,null);
+        ((EditText)v.findViewById(R.id.edit_one)).addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                weightOfNewItem = Double.valueOf(editable.toString());
+                Log.d(TAG, "afterTextChanged:weightOfNewItem editable" + editable.toString());
+            }
+        });
+        ((EditText)v.findViewById(R.id.edit_two)).addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                timesOfNewItem = Integer.valueOf(editable.toString());
+                Log.d(TAG, "afterTextChanged:timesOfNewItem editable" + editable.toString());
+            }
+        });
+        dialog.setPositiveButton("取消", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {}
+        });
+        dialog.setNeutralButton("滚轮输入", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                showDialogOfItem(null);
+            }
+        });
+        dialog.setNegativeButton("确定", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                saveTrainRecord();
+            }
+        });
+
+        dialog.setView(v);
+        Dialog ab = dialog.create();
+        ab.show();
+    }
 
     private void saveTrainRecord() {
         trainRecordsToday.get(flagActionSelect).add(new TrainRecord(weightOfNewItem,timesOfNewItem));

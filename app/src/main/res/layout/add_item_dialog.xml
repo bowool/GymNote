@@ -15,7 +15,7 @@
             />
 
         <TextView
-            android:text="kg"
+            android:text="@string/weight_unit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/weight_unit_text"
@@ -30,7 +30,7 @@
             />
 
         <TextView
-            android:text="组"
+            android:text="@string/times_unit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/times_unit_text"

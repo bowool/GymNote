@@ -21,6 +21,6 @@
         android:layout_weight="1"
         android:layout_gravity="center_vertical|left"
         android:gravity="center_vertical|left"
-        android:background="@color/buttonBackground"/>
+        android:clickable="true"/>
 
 </LinearLayout>

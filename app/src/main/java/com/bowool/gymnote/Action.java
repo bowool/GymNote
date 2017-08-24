@@ -79,6 +79,9 @@ public class Action extends DataSupport {
         return id +" "+ actionName + " " + exerciseParts;
 
     }
+    public void addExerciseRecord(ExerciseRecord e){
+        exerciseRecords.add(e);
+    }
 
     public int getId() {
         return id;
