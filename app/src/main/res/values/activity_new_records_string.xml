@@ -3,7 +3,8 @@
     <string name="action_settings">Settings</string>
     <string name="save_action">保存动作</string>
     <string name="history_title">上次记录</string>
-    <string name="history_empty">点击左侧选择动作</string>
+    <string name="history_empty">点击左侧显示历史记录</string>
+    <string name="history_null">本动作暂无历史记录</string>
     <string name="das_ago">天前</string>
     <string name="trainning_day">训练日：</string>
 </resources>

@@ -17,6 +17,7 @@ import android.graphics.Paint.Style;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -124,6 +125,13 @@ public class PickerView extends View
     {
         mCurrentSelected = selected;
     }
+/*If the string is existed ,set it selected*/
+    public void setSelected(String selected)
+    {
+        if (mDataList.contains(selected))
+            mCurrentSelected = mDataList.indexOf(selected);
+        Log.d(TAG, "setSelected: set "+selected +"selected");
+    }
 
     private void moveHeadToTail()
     {
@@ -152,6 +160,9 @@ public class PickerView extends View
         invalidate();
     }
 
+    public String getCurrentSelectedItem(){
+        return mDataList.get(mCurrentSelected);
+    }
     private void init()
     {
         timer = new Timer();

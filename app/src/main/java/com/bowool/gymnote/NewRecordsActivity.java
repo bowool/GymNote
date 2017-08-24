@@ -147,38 +147,48 @@ public class NewRecordsActivity extends AppCompatActivity {
             TextView tv = viewToShow.findViewById(R.id.history_action_name);
             tv.setText(text);
             tv.setGravity(Gravity.CENTER);
-            historySwitcher.showNext();
         }else{
             List<ExerciseRecord>exRd =  DataSupport.where("action_id = ?", String.valueOf(action.getId())).find(ExerciseRecord.class,true);
-            ExerciseRecord ex = exRd.get(0);///// TODO: exRd.size() == 0 ?
-            Log.d(TAG, "showHistory: exRd : "+ exRd + "ex :"+ex);
-            ArrayList<String>  showList =new ArrayList<>();
-            for ( TrainRecord tr :ex.getTrainRecords()){
-                showList . add(tr.getWeight() + "KG * " + tr.getCount() + "组"); //// TODO: 2017/8/20 格式转换
+            if (exRd.size() != 0){
+
+                ExerciseRecord ex = exRd.get(0);///// TODO: exRd.size() == 0 ?
+                Log.d(TAG, "showHistory: exRd : "+ exRd + "ex :"+ex);
+                ArrayList<String>  showList =new ArrayList<>();
+                for ( TrainRecord tr :ex.getTrainRecords()){
+                    showList . add(tr.getWeight() + "KG * " + tr.getCount() + "组"); //// TODO: 2017/8/20 格式转换
+                }
+
+                ListView historyList = viewToShow.findViewById(R.id.history_list);
+                historyList.setVisibility(View.VISIBLE);
+                ArrayAdapter<String> adapter = new ArrayAdapter<String>(
+                        this,android.R.layout.simple_list_item_1, (String[]) showList.toArray(new String[showList.size()]));
+                historyList.setAdapter(adapter);
+
+                TextView tv = viewToShow.findViewById(R.id.history_action_name);
+
+                long dayToNow = DateManager.dayToNow(ex.getTrainDay());
+                SpannableStringBuilder recordText= new SpannableStringBuilder(getString(R.string.history_title));
+                recordText.setSpan(new AbsoluteSizeSpan(60), 0, recordText.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+                SpannableStringBuilder dayToNowString= new SpannableStringBuilder("    " + dayToNow + getString(R.string.das_ago));
+                dayToNowString.setSpan(new AbsoluteSizeSpan(30), 0, dayToNowString.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+                tv.setText(recordText.append(dayToNowString));
+                tv.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
+                Log.d(TAG, "showHistory: "+action.getActionName());
+            }else{
+                Log.d(TAG, "showHistory: Show null!");
+                SpannableStringBuilder text= new SpannableStringBuilder(getString(R.string.history_null));
+                text.setSpan(new AbsoluteSizeSpan(60), 0, text.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+                viewToShow.findViewById(R.id.history_list).setVisibility(View.GONE);
+                TextView tv = viewToShow.findViewById(R.id.history_action_name);
+                tv.setText(text);
+                tv.setGravity(Gravity.CENTER);
+
             }
-
-            ListView historyList = viewToShow.findViewById(R.id.history_list);
-            historyList.setVisibility(View.VISIBLE);
-            ArrayAdapter<String> adapter = new ArrayAdapter<String>(
-                    this,android.R.layout.simple_list_item_1, (String[]) showList.toArray(new String[showList.size()]));
-            historyList.setAdapter(adapter);
-
-            TextView tv = viewToShow.findViewById(R.id.history_action_name);
-
-            long dayToNow = DateManager.dayToNow(ex.getTrainDay());
-            SpannableStringBuilder recordText= new SpannableStringBuilder(getString(R.string.history_title));
-            recordText.setSpan(new AbsoluteSizeSpan(60), 0, recordText.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-            SpannableStringBuilder dayToNowString= new SpannableStringBuilder("    " + dayToNow + getString(R.string.das_ago));
-            dayToNowString.setSpan(new AbsoluteSizeSpan(30), 0, dayToNowString.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-            tv.setText(recordText.append(dayToNowString));
-            tv.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
-            Log.d(TAG, "showHistory: "+action.getActionName());
-            historySwitcher.showNext();
-
         }
-
+        historySwitcher.showNext();
     }
 
     public void showRecords(Action action){
@@ -195,7 +205,6 @@ public class NewRecordsActivity extends AppCompatActivity {
             recordsSwitcher.showNext();
         }else{
             trainRecordsToday.get(actionToday.indexOf(action));
-
             ArrayList<String>  showList =new ArrayList<>();
             for ( TrainRecord tr : (ArrayList<TrainRecord>) trainRecordsToday.get(flagActionSelect)){
                 showList . add(tr.getWeight() + "KG * " + tr.getCount() + "组"); //// TODO: 2017/8/20 格式转换
@@ -208,9 +217,7 @@ public class NewRecordsActivity extends AppCompatActivity {
             historyList.setAdapter(adapter);
             Log.d(TAG, "showRecords: "+action.getActionName());
             recordsSwitcher.showNext();
-
         }
-
     }
     //左上角 动作列表 监听器
     int flagActionSelect = -1;
@@ -245,6 +252,7 @@ public class NewRecordsActivity extends AppCompatActivity {
 
     double weightOfNewItem;
     int timesOfNewItem;
+
     void showDialogOfItem(){
 
         AlertDialog.Builder dialog=new AlertDialog.Builder(this);
@@ -269,6 +277,10 @@ public class NewRecordsActivity extends AppCompatActivity {
             dataTimes.add(i + "");
         }
         minute_pv.setData(dataWeight);
+        if (weightOfNewItem != 0)
+            minute_pv.setSelected(weightOfNewItem + "");
+        else
+            weightOfNewItem = Double.valueOf(minute_pv.getCurrentSelectedItem());
         minute_pv.setOnSelectListener(new PickerView.onSelectListener()
         {
 
@@ -278,9 +290,16 @@ public class NewRecordsActivity extends AppCompatActivity {
                 Toast.makeText(NewRecordsActivity.this, "选择了 " + text + " 重",
                         Toast.LENGTH_SHORT).show();
                 weightOfNewItem = Double.valueOf(text);
+
             }
         });
         second_pv.setData(dataTimes);
+        Log.d(TAG, "showDialogOfItem: times of new item :" + timesOfNewItem);
+        if (timesOfNewItem != 0)
+            second_pv.setSelected(timesOfNewItem + "");
+        else
+            timesOfNewItem = Integer.valueOf(second_pv.getCurrentSelectedItem());
+
         second_pv.setOnSelectListener(new PickerView.onSelectListener()
         {
 
@@ -330,6 +349,7 @@ public class NewRecordsActivity extends AppCompatActivity {
 
 
     }
+    void showDialogOfItemManual(){}
 
     private void saveTrainRecord() {
         trainRecordsToday.get(flagActionSelect).add(new TrainRecord(weightOfNewItem,timesOfNewItem));
