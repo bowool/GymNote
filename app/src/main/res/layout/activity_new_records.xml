@@ -47,7 +47,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textStyle="bold"
-        android:id="@+id/button2"
         android:textSize="60px"
         android:onClick="save_action"
         app:layout_constraintRight_toRightOf="parent"

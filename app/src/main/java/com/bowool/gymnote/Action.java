@@ -14,39 +14,19 @@ import java.util.Date;
 
 public class Action extends DataSupport {
     private String actionName;
-    private String exerciseParts;
+    private ArrayList<ExercisePart>  exerciseParts;
     private  ArrayList<ExerciseRecord> exerciseRecords = new ArrayList<ExerciseRecord>();
     private Date lastTrainDay;
     private int id;
 
-    public Action(String actionName, String exerciseParts) {
+    public Action(String actionName, ExercisePart exerciseParts) {
         this.actionName = actionName;
-        this.exerciseParts = exerciseParts;
-    }
-    public Action(String actionName, String[] exerciseParts) {
-        this.actionName = actionName;
-        String exercisePartsTmp = null;
-        for(String tmp :exerciseParts){
-            if (exercisePartsTmp == null){
-                exercisePartsTmp = tmp;
-            }else{
-                exercisePartsTmp = exercisePartsTmp + ","+tmp;
-            }
-        }
-        this.exerciseParts = exercisePartsTmp;
+        this.exerciseParts.add(exerciseParts);
     }
 
-    public Action(String actionName, ArrayList<String> exerciseParts) {
+    public Action(String actionName, ArrayList<ExercisePart> exerciseRs) {
         this.actionName = actionName;
-        String exercisePartsTmp = null;
-        for(String tmp :exerciseParts){
-            if (exercisePartsTmp == null){
-                exercisePartsTmp = tmp;
-            }else{
-                exercisePartsTmp = exercisePartsTmp + ","+tmp;
-            }
-        }
-        this.exerciseParts = exercisePartsTmp;
+        this.exerciseParts.addAll(exerciseRs);
     }
 
     public Action() {}
@@ -60,12 +40,8 @@ public class Action extends DataSupport {
     }
 
 
-    public ArrayList<String> getExerciseParts() {
-        return new ArrayList<>(Arrays.asList(exerciseParts.split(",")));
-    }
-
-    public void setExerciseParts(String exerciseParts) {
-        this.exerciseParts = exerciseParts;
+    public ArrayList<ExercisePart> getExerciseParts() {
+        return exerciseParts;
     }
 
     @Override
@@ -101,5 +77,9 @@ public class Action extends DataSupport {
 
     public void setLastTrainDay(Date lastTrainDay) {
         this.lastTrainDay = lastTrainDay;
+    }
+
+    public void setExerciseParts(ArrayList<ExercisePart> exerciseParts) {
+        this.exerciseParts.addAll(exerciseParts);
     }
 }

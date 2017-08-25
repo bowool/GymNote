@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimary">#303f9e</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
-    <color name="buttonBackground">#B0E0E6</color>
-    <color name="itemNoUsed">#FAFAFA</color>
+    <color name="buttonBackground">#ffffff</color>
+    <color name="itemNoUsed">#dcd2d2</color>
     <color name="itemSelected">#AEB3BE</color>
-    <color name="itemNoFinished">#D4D6DC</color>
-    <color name="itemFinished">#888FA0</color>
+    <color name="itemNoFinished">#d4d6dc</color>
+    <color name="itemFinished">#888fa0</color>
     <color name="itemDark">#626C83</color>
 </resources>

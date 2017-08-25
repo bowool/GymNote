@@ -50,7 +50,7 @@ public class NewRecordsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_records);
-        mContext=getBaseContext();
+        mContext=this;
         mRoot =(ViewGroup) getWindow().getDecorView().findViewById(android.R.id.content);
 
         /*chronometer list creator begin*/
@@ -62,18 +62,13 @@ public class NewRecordsActivity extends AppCompatActivity {
 
         /*action Title  creator begin*/
         TextView actionListTitle = (TextView)findViewById(R.id.action_view_title);
-        String exercisePart = "胸";//// TODO: 2017/8/20 上一个界面写好之后以Intent传入的替换，如果可以，将最近锻炼时间放到上一个界面加载
-        List<Action>acs =  DataSupport.findAll(Action.class);
-        Date lastTrainDay =new Date();
-        for(Action ac :acs){
-            if(ac.getExerciseParts().contains(exercisePart)){
-                if(ac.getExerciseRecords().size() > 1 && ac.getExerciseRecords().get(ac.getExerciseRecords().size() - 1 ) != null){
-                    Date day = ac.getExerciseRecords().get(ac.getExerciseRecords().size() - 1 ).getTrainDay();
-                    lastTrainDay = day.before(lastTrainDay) ?  day : lastTrainDay;}
-            }
-        }
+
+        ExercisePart exercisePart = new ExercisePart("胸");
+        exercisePart.setLastTrainDay(new Date());
+
+        Date lastTrainDay = exercisePart.getLastTrainDay();
         long dayToNow = DateManager.dayToNow(lastTrainDay);
-        SpannableStringBuilder recordText= new SpannableStringBuilder(exercisePart);
+        SpannableStringBuilder recordText= new SpannableStringBuilder(exercisePart.getPartName());
         recordText.setSpan(new AbsoluteSizeSpan(100), 0, recordText.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
         SpannableStringBuilder dayToNowString= new SpannableStringBuilder("    " + dayToNow + getString(R.string.das_ago));
@@ -468,9 +463,6 @@ public class NewRecordsActivity extends AppCompatActivity {
             Log.d(TAG, "getdatabase: action part is "+action.getExerciseParts());
             if (action.getExerciseParts() instanceof  ArrayList){
                 Log.d(TAG, "getdatabase: is ArrayList ");
-            }
-            if (action.getExerciseParts().contains("腿")){
-                Log.d(TAG, "getdatabase: read database :"+action);
             }
         }
 

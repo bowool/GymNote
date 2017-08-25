@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <litepal>
     <dbname value ="ActionStore"></dbname>
-    <version value ="1"></version>
+    <version value ="2"></version>
     <list>
         <mapping class ="com.bowool.gymnote.ExerciseRecord"></mapping>
         <mapping class ="com.bowool.gymnote.Action"></mapping>
         <mapping class="com.bowool.gymnote.TrainRecord"></mapping>
+        <mapping class="com.bowool.gymnote.ExercisePart"></mapping>
     </list>
 </litepal>
