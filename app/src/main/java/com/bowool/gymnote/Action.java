@@ -14,7 +14,7 @@ import java.util.Date;
 
 public class Action extends DataSupport {
     private String actionName;
-    private ArrayList<ExercisePart>  exerciseParts;
+    private ArrayList<ExercisePart> exerciseParts= new ArrayList<ExercisePart>();
     private  ArrayList<ExerciseRecord> exerciseRecords = new ArrayList<ExerciseRecord>();
     private Date lastTrainDay;
     private int id;
@@ -52,9 +52,15 @@ public class Action extends DataSupport {
 
     @Override
     public String toString() {
-        return id +" "+ actionName + " " + exerciseParts;
-
+        return "Action{" +
+                "actionName='" + actionName + '\'' +
+                ", exerciseParts=" + exerciseParts +
+                ", exerciseRecords=" + exerciseRecords +
+                ", lastTrainDay=" + lastTrainDay +
+                ", id=" + id +
+                '}';
     }
+
     public void addExerciseRecord(ExerciseRecord e){
         exerciseRecords.add(e);
     }

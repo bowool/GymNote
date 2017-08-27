@@ -36,6 +36,18 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+        <com.bowool.gymnote.widget.TagListView
+            xmlns:f="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/exercise_parts_tag_view_in_dialog"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="@dimen/common_margin"
+            android:paddingLeft="@dimen/common_margin"
+            android:paddingRight="@dimen/common_margin"
+            android:paddingTop="16.0dip"
+            f:horizontalSpacing="@dimen/tag_horizontal_spacing"
+            f:orientation="horizontal"
+            f:verticalSpacing="@dimen/tag_vertical_spacing"/>
 
     </FrameLayout>
 </LinearLayout>

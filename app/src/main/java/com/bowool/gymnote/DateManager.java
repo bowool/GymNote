@@ -21,6 +21,9 @@ public class DateManager {
         return diff / (24 * 60 * 60 * 1000);
     }
     static public long dayToNow(Date earlyDay){
-        return daysBetweenTwoDates(earlyDay,new Date());
+        if(earlyDay != null)
+            return daysBetweenTwoDates(earlyDay,new Date());
+        else
+            return dayToNow(new Date());
     }
 }
