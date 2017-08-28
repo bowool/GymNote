@@ -21,19 +21,26 @@ import com.bowool.gymnote.widget.*;
 
 import org.litepal.crud.DataSupport;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 import java.util.HashMap;
 import java.util.Iterator;
 
 public class NewActionActivity extends AppCompatActivity {
-    static String TAG = "gymnote.NewActionActivity";
+    static String TAG = "gymnote.NewAction";
     private TagListView mExercisePartsTagListView;
     private final List<Tag> mExercisePartsTags = new ArrayList<Tag>();
     private TagListView mActionTagListView;
     private final List<Tag> mActionTags = new ArrayList<Tag>();
     private HashMap<Integer,ExercisePart> selectExerciseParts = new HashMap<>();
+    private HashMap<Integer,Action> selectActions = new HashMap<>();
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +91,18 @@ public class NewActionActivity extends AppCompatActivity {
                 }
             }
         });
+
+        TagView addNew = (TagView) View.inflate(this,
+                R.layout.tag, null);
+        addNew.setText(R.string.add_new);
+        addNew.setBackgroundResource(R.drawable.tag_checked_normal);
+        addNew.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                newExercisePart(view);
+            }
+        });
+        mExercisePartsTagListView.addView(addNew);
     }
     
     private void refreshSelectExerciseParts(){
@@ -108,6 +127,10 @@ public class NewActionActivity extends AppCompatActivity {
             tag.setChecked(true);
             tag.setTitle(action.getActionName() + "("
                     + DateManager.dayToNow(action.getLastTrainDay())+ getString(R.string.das_ago) + ")");
+            for (Action act : (List<Action>)getListByMap(selectActions,false)){
+                if (act.getId() == action.getId())
+                    tag.setOr(true);
+            }
             mActionTags.add(tag);
 
         }
@@ -120,18 +143,34 @@ public class NewActionActivity extends AppCompatActivity {
                     tag.setOr(false);
                     tagView.setBackgroundResource(R.drawable.tag_checked_normal);
                     Toast.makeText(getApplicationContext(),"您取消了"+tagView.getText().toString(), Toast.LENGTH_LONG).show();
+                    selectActions.remove(tag.getId());
                 }else{
                     tag.setOr(true);
                     Toast.makeText(getApplicationContext(),tagView.getText().toString()+"id"+tag.getId(), Toast.LENGTH_LONG).show();
                     tagView.setBackgroundResource(R.drawable.tag_checked_pressed);
+                    selectActions.put(
+                            tag.getId(),DataSupport.find(Action.class,tag.getId(),true)
+                    );
                     tagView.setChecked(true);
                 }
             }
         });
+
+        TagView addNew = (TagView) View.inflate(this,
+                R.layout.tag, null);
+        addNew.setText(R.string.add_new);
+        addNew.setBackgroundResource(R.drawable.tag_checked_normal);
+        addNew.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                newAction(view);
+            }
+        });
+        mActionTagListView.addView(addNew);
     }
 
     void initExerciseParts(){
-        RelativeLayout exercisePartsContainer = (RelativeLayout) findViewById(R.id.exercise_parts_container);
+        /*RelativeLayout exercisePartsContainer = (RelativeLayout) findViewById(R.id.exercise_parts_container);
         ArrayList <ExercisePart> exerciseParts = new ArrayList<>(DataSupport.findAll(ExercisePart.class));
         for (ExercisePart exercisePart :exerciseParts){
             Button button = new Button(this);
@@ -141,11 +180,22 @@ public class NewActionActivity extends AppCompatActivity {
             myGrad.setColor(0xff000000 | new Random().nextInt(0x00ffffff));//随机取圆球颜色
             //TODO: not finished
 
-        }
+        }*/
 
     }
     public void startTrain(View v){
+        ArrayList<Integer> actionsToday = new ArrayList<>();
+        ArrayList<Integer>exercisePartsToday = new ArrayList<>();
+        for (Action act :(ArrayList <Action>)getListByMap(selectActions,false)){
+            actionsToday.add(act.getId());
+        }
+        for (ExercisePart exp : (ArrayList<ExercisePart>)getListByMap(selectExerciseParts,false)){
+            exercisePartsToday.add(exp.getId());
+        }
+
         Intent intent = new Intent(NewActionActivity.this,NewRecordsActivity.class);
+        intent.putIntegerArrayListExtra("actions_today",actionsToday);
+        intent.putIntegerArrayListExtra("exercise_parts_today",exercisePartsToday);
         startActivity(intent);
     }
     public void refreshView(){
@@ -179,14 +229,23 @@ public class NewActionActivity extends AppCompatActivity {
         View diaView = LayoutInflater.from(NewActionActivity.this).inflate(R.layout.add_aciton_dialog,null);
         final EditText name = diaView.findViewById(R.id.action_name);
         TagListView mExercisePartsTagListViewInDialog = (TagListView) diaView.findViewById(R.id.exercise_parts_tag_view_in_dialog);
-        List<Tag> mExercisePartsDialogTags =new ArrayList<>(mExercisePartsTags) ;
+        List<Tag> mExercisePartsDialogTags = null;
+        try {
+            mExercisePartsDialogTags = deepCopy(mExercisePartsTags);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        //mExercisePartsTagListViewInDialog.resetTagSelect();
         mExercisePartsTagListViewInDialog.setTags(mExercisePartsDialogTags);
-        mExercisePartsTagListViewInDialog.resetTagSelect();
-        final HashMap<Integer,ExercisePart> exercisePartsTmp = new HashMap<>();
+
+        final HashMap<Integer,ExercisePart> exercisePartsTmp = new HashMap<>(selectExerciseParts);
         mExercisePartsTagListViewInDialog.setOnTagClickListener(new TagListView.OnTagClickListener() {
             @Override
             public void onTagClick(TagView tagView, Tag tag) {
-                if(tag.getOr()==true){
+                if(tag.getOr()){
                     tag.setOr(false);
                     tagView.setBackgroundResource(R.drawable.tag_checked_normal);
                     Toast.makeText(getApplicationContext(),"您取消了"+tagView.getText().toString(), Toast.LENGTH_LONG).show();
@@ -247,13 +306,23 @@ public class NewActionActivity extends AppCompatActivity {
             Object key = it.next();
             if (isKey) {
                 list.add(key);
-                Log.d(TAG, "getListByMap: add key " + key);
             } else {
                 list.add(map.get(key));
-                Log.d(TAG, "getListByMap: add value "+ map.get(key));
             }
         }
 
         return list;
+    }
+
+    public static <T> List<T> deepCopy(List<T> src) throws IOException, ClassNotFoundException {
+        ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
+        ObjectOutputStream out = new ObjectOutputStream(byteOut);
+        out.writeObject(src);
+
+        ByteArrayInputStream byteIn = new ByteArrayInputStream(byteOut.toByteArray());
+        ObjectInputStream in = new ObjectInputStream(byteIn);
+        @SuppressWarnings("unchecked")
+        List<T> dest = (List<T>) in.readObject();
+        return dest;
     }
 }

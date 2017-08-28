@@ -8,13 +8,20 @@
     tools:context="com.bowool.gymnote.NewActionActivity"
     android:orientation="vertical">
 
-    <RelativeLayout
+    <TextView
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:id="@+id/exercise_parts_container">
+        android:layout_height="wrap_content"
+        android:text="@string/train_part"
+        android:layout_gravity="center_vertical|left"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:textSize="@dimen/title_size"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
         <com.bowool.gymnote.widget.TagListView
-            xmlns:f="http://schemas.android.com/apk/res-auto"
             android:id="@+id/exercise_parts_tag_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -22,33 +29,26 @@
             android:paddingLeft="@dimen/common_margin"
             android:paddingRight="@dimen/common_margin"
             android:paddingTop="16.0dip"
-            f:horizontalSpacing="@dimen/tag_horizontal_spacing"
-            f:orientation="horizontal"
-            f:verticalSpacing="@dimen/tag_vertical_spacing"/>
+            app:horizontalSpacing="@dimen/tag_horizontal_spacing"
+            app:orientation="horizontal"
+            app:verticalSpacing="@dimen/tag_vertical_spacing" />
+    </ScrollView>
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/new_exercise_part"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginBottom="39dp"
-            android:layout_marginEnd="21dp"
-            android:clickable="true"
-            app:backgroundTint="@android:color/holo_blue_dark"
-            app:elevation="0dp"
-            app:fabSize="normal"
-            app:rippleColor="@color/itemNoFinished"
-            android:onClick="newExercisePart"
-            app:srcCompat="@android:drawable/ic_input_add" />
-    </RelativeLayout>
-
-    <RelativeLayout
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/action_container">
+        android:text="@string/train_action"
+        android:layout_gravity="center_vertical|left"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:textSize="@dimen/title_size"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
         <com.bowool.gymnote.widget.TagListView
-            xmlns:f="http://schemas.android.com/apk/res-auto"
             android:id="@+id/action_tag_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -56,24 +56,10 @@
             android:paddingLeft="@dimen/common_margin"
             android:paddingRight="@dimen/common_margin"
             android:paddingTop="16.0dip"
-            f:horizontalSpacing="@dimen/tag_horizontal_spacing"
-            f:orientation="horizontal"
-            f:verticalSpacing="@dimen/tag_vertical_spacing"/>
-
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/new_action"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_marginTop="172dp"
-            android:clickable="true"
-            app:backgroundTint="@android:color/holo_purple"
-            app:elevation="0dp"
-            app:fabSize="normal"
-            app:rippleColor="@color/itemFinished"
-            android:onClick="newAction"
-            app:srcCompat="@android:drawable/ic_input_add" />
-    </RelativeLayout>
+            app:horizontalSpacing="@dimen/tag_horizontal_spacing"
+            app:orientation="horizontal"
+            app:verticalSpacing="@dimen/tag_vertical_spacing" />
+    </ScrollView>
 
     <TextView
         android:layout_width="match_parent"
@@ -81,8 +67,9 @@
         android:text="@string/begin_train"
         android:layout_gravity="center_vertical|right"
         android:gravity="center_vertical|right"
-        android:textSize="30dp"
-        android:layout_marginBottom="12dp"
-        android:layout_marginRight="12dp"
+        android:textStyle="bold"
+        android:textSize="@dimen/button_size"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
         android:onClick="startTrain"/>
 </LinearLayout>

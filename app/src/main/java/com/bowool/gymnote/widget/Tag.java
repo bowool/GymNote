@@ -1,84 +1,100 @@
 package com.bowool.gymnote.widget;
 
+import android.util.Log;
+
 import java.io.Serializable;
 
 public class Tag implements Serializable {
-	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 2684657309332033242L;
-	
-	private int backgroundResId;
-	private int id;
-	private boolean isChecked;
-	private int leftDrawableResId;
-	private int rightDrawableResId;
-	private String title;
-	boolean or;
+    
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 2684657309332033242L;
+    
+    private int backgroundResId;
+    private int id;
+    private boolean isChecked;
+    private int leftDrawableResId;
+    private int rightDrawableResId;
+    private String title;
+    boolean or;
 
-	public boolean getOr() {
-		return or;
-	}
+    public boolean getOr() {
+        return or;
+    }
 
-	public void setOr(boolean or) {
-		this.or = or;
-	}
+    public void setOr(boolean or) {
+        Log.d("gymnote.NewActionActivity", "setOr: "+this.toString());
+        this.or = or;
+    }
 
-	public Tag() {
-		
-	}
+    public Tag() {
+        
+    }
 
-	public Tag(int paramInt, String paramString) {
-		this.id = paramInt;
-		this.title = paramString;
-	}
+    public Tag(int paramInt, String paramString) {
+        this.id = paramInt;
+        this.title = paramString;
+    }
 
-	public int getBackgroundResId() {
-		return this.backgroundResId;
-	}
+    public int getBackgroundResId() {
+        return this.backgroundResId;
+    }
 
-	public int getId() {
-		return this.id;
-	}
+    public int getId() {
+        return this.id;
+    }
 
-	public int getLeftDrawableResId() {
-		return this.leftDrawableResId;
-	}
+    public int getLeftDrawableResId() {
+        return this.leftDrawableResId;
+    }
 
-	public int getRightDrawableResId() {
-		return this.rightDrawableResId;
-	}
+    public int getRightDrawableResId() {
+        return this.rightDrawableResId;
+    }
 
-	public String getTitle() {
-		return this.title;
-	}
+    public String getTitle() {
+        return this.title;
+    }
 
-	public boolean isChecked() {
-		return this.isChecked;
-	}
+    public boolean isChecked() {
+        return this.isChecked;
+    }
 
-	public void setBackgroundResId(int paramInt) {
-		this.backgroundResId = paramInt;
-	}
+    public void setBackgroundResId(int paramInt) {
+        this.backgroundResId = paramInt;
+    }
 
-	public void setChecked(boolean paramBoolean) {
-		this.isChecked = paramBoolean;
-	}
+    public void setChecked(boolean paramBoolean) {
+        this.isChecked = paramBoolean;
+    }
 
-	public void setId(int paramInt) {
-		this.id = paramInt;
-	}
+    public void setId(int paramInt) {
+        this.id = paramInt;
+    }
 
-	public void setLeftDrawableResId(int paramInt) {
-		this.leftDrawableResId = paramInt;
-	}
+    public void setLeftDrawableResId(int paramInt) {
+        this.leftDrawableResId = paramInt;
+    }
 
-	public void setRightDrawableResId(int paramInt) {
-		this.rightDrawableResId = paramInt;
-	}
+    public void setRightDrawableResId(int paramInt) {
+        this.rightDrawableResId = paramInt;
+    }
 
-	public void setTitle(String paramString) {
-		this.title = paramString;
-	}
+    public void setTitle(String paramString) {
+        this.title = paramString;
+    }
+
+    @Override
+    public String toString() {
+        return "Tag{" +
+                "backgroundResId=" + backgroundResId +
+                ", id=" + id +
+                ", isChecked=" + isChecked +
+                ", leftDrawableResId=" + leftDrawableResId +
+                ", rightDrawableResId=" + rightDrawableResId +
+                ", title='" + title + '\'' +
+                ", or=" + or +
+                '}';
+    }
 }

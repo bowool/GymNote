@@ -8,6 +8,7 @@
     <string name="history_null">本动作暂无历史记录</string>
     <string name="das_ago">天前</string>
     <string name="trainning_day">训练日：</string>
+    <string name="separative_sign">、</string>
     <string name="weight_unit">Kg</string>
     <string name="times_unit">次</string>
     <string name="new_records">新增</string>

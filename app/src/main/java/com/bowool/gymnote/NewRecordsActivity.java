@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -61,25 +62,29 @@ public class NewRecordsActivity extends AppCompatActivity {
         /*chronometer list creator end*/
 
         /*action Title  creator begin*/
-        TextView actionListTitle = (TextView)findViewById(R.id.action_view_title);
+        TextView actionListTitle = (TextView)findViewById(R.id.action_today);
 
-        ExercisePart exercisePart = new ExercisePart("胸");
-        exercisePart.setLastTrainDay(new Date());
+        Intent intent= getIntent();
+        ArrayList <ExercisePart> exerciseParts = new ArrayList<>();
+        String title = getString(R.string.trainning_day);
+        int k = 0;
+        for (int i :intent.getIntegerArrayListExtra("exercise_parts_today")){
+            exerciseParts.add(DataSupport.find(ExercisePart.class,i));
+            exerciseParts.get(k).setLastTrainDay(new Date());
+            exerciseParts.get(k).save();
+            title = title + exerciseParts.get(k).getPartName() + getString(R.string.separative_sign);
+            k++;
+        }
 
-        Date lastTrainDay = exercisePart.getLastTrainDay();
-        long dayToNow = DateManager.dayToNow(lastTrainDay);
-        SpannableStringBuilder recordText= new SpannableStringBuilder(exercisePart.getPartName());
-        recordText.setSpan(new AbsoluteSizeSpan(100), 0, recordText.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-        SpannableStringBuilder dayToNowString= new SpannableStringBuilder("    " + dayToNow + getString(R.string.das_ago));
-        dayToNowString.setSpan(new AbsoluteSizeSpan(50), 0, dayToNowString.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-        actionListTitle.setText(recordText.append(dayToNowString));
+        actionListTitle.setText(title);
         /*action Title  creator begin*/
 
 
         /*action list creator begin*/
-        getdatabase();//// TODO: 2017/8/19 for debug
+        actionToday = new ArrayList<>();
+        for (int i :intent.getIntegerArrayListExtra("actions_today")){
+            actionToday.add(DataSupport.find(Action.class,i));
+        }
         actionList =(ListView) findViewById(R.id.action_container);
         actionAdapter =new ActionAdapter(this ,R.layout.action_item,actionToday);
         actionList.setAdapter(actionAdapter);
@@ -454,19 +459,6 @@ public class NewRecordsActivity extends AppCompatActivity {
         showRecords(actionToday.get(flagActionSelect));
     }
 
-
-    public void getdatabase( ) {//TODO:debug app ,need to delete
-        List<Action> ext = DataSupport.findAll(Action.class);
-        actionToday = new ArrayList<Action> (ext);
-        for (Action action : ext){
-            Log.d(TAG, "getdatabase: action is "+action+" ;action id is "+action.getId());
-            Log.d(TAG, "getdatabase: action part is "+action.getExerciseParts());
-            if (action.getExerciseParts() instanceof  ArrayList){
-                Log.d(TAG, "getdatabase: is ArrayList ");
-            }
-        }
-
-    }
 
 
 

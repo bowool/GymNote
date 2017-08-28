@@ -10,4 +10,7 @@
     <dimen name="tag_vertical_spacing">6.0dip</dimen>
     <dimen name="common_margin">12.0dip</dimen>
     <dimen name="common_margin_10">10.0dip</dimen>
+
+    <dimen name="title_size">25dp</dimen>
+    <dimen name="button_size">35dp</dimen>
 </resources>

@@ -3,7 +3,11 @@
     <string name="begin_train">开始训练</string>
     <string name="action_name">动作名称</string>
     <string name="train_part">训练部位</string>
+    <string name="train_action">训练动作</string>
     <string name="train_part_name">肌肉群名称</string>
     <string name="finished">完成</string>
     <string name="save_exercise_part">保存肌肉群</string>
+    <string name="add_new">新增 ＋</string>
+    <string name="tip_of_new_action_dialog">动作名称</string>
+    <string name="tip_of_new_part_dialog">肌群名称</string>
 </resources>

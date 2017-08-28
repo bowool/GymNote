@@ -64,7 +64,7 @@ public class ExercisePart extends DataSupport {
     @Override
     public String toString() {
         return "ExercisePart{" +
-                "actions=" + actions +
+                "actions=" + actions.size() +
                 ", partName='" + partName + '\'' +
                 ", lastTrainDay=" + lastTrainDay +
                 ", id=" + id +
