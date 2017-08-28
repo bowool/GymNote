@@ -24,15 +24,17 @@ import org.litepal.crud.DataSupport;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.HashMap;
+import java.util.Iterator;
 
 public class NewActionActivity extends AppCompatActivity {
-    String TAG = this.getClass().getName();
+    static String TAG = "gymnote.NewActionActivity";
     private TagListView mExercisePartsTagListView;
     private final List<Tag> mExercisePartsTags = new ArrayList<Tag>();
     private TagListView mActionTagListView;
     private final List<Tag> mActionTags = new ArrayList<Tag>();
-    private ArrayList<ExercisePart> selectExerciseParts = new ArrayList<>();
-
+    private HashMap<Integer,ExercisePart> selectExerciseParts = new HashMap<>();
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,6 +50,8 @@ public class NewActionActivity extends AppCompatActivity {
 
     private void setUpExercisePartsLayout() {
         ArrayList <ExercisePart> exerciseParts = new ArrayList<>(DataSupport.findAll(ExercisePart.class));
+        selectExerciseParts.clear();
+        mExercisePartsTags.clear();
         for (ExercisePart exercisePart :exerciseParts){
             Tag tag = new Tag();
             tag.setId(exercisePart.getId());
@@ -66,25 +70,35 @@ public class NewActionActivity extends AppCompatActivity {
                     tag.setOr(false);
                     tagView.setBackgroundResource(R.drawable.tag_checked_normal);
                     Toast.makeText(getApplicationContext(),"您取消了"+tagView.getText().toString(), Toast.LENGTH_LONG).show();
-                    selectExerciseParts.remove(
-                            DataSupport.find(ExercisePart.class,tag.getId(),true)
-                    );
+                    selectExerciseParts.remove(tag.getId());
+                    setUpActionLayout();
                 }else{
                     tag.setOr(true);
                     Toast.makeText(getApplicationContext(),tagView.getText().toString()+"id"+tag.getId(), Toast.LENGTH_LONG).show();
-                    selectExerciseParts.add(
-                            DataSupport.find(ExercisePart.class,tag.getId(),true)
+                    selectExerciseParts.put(
+                            tag.getId(),DataSupport.find(ExercisePart.class,tag.getId(),true)
                     );
                     tagView.setBackgroundResource(R.drawable.tag_checked_pressed);
                     tagView.setChecked(true);
+                    setUpActionLayout();
                 }
             }
         });
     }
+    
+    private void refreshSelectExerciseParts(){
+        for (int i : (List<Integer>)getListByMap(selectExerciseParts,true)){
+            selectExerciseParts.put(
+                    i,DataSupport.find(ExercisePart.class,i,true)
+                );
+            }
+        }
 
     private void setUpActionLayout() {
         ArrayList <Action> actions = new ArrayList<>();
-        for (ExercisePart select :selectExerciseParts){
+        mActionTags.clear();
+        refreshSelectExerciseParts();
+        for (ExercisePart select :(List<ExercisePart>) getListByMap(selectExerciseParts,false)){
             actions.addAll(select.getActions());
             Log.d(TAG, "setUpActionLayout: select :"+select);
         }
@@ -165,8 +179,10 @@ public class NewActionActivity extends AppCompatActivity {
         View diaView = LayoutInflater.from(NewActionActivity.this).inflate(R.layout.add_aciton_dialog,null);
         final EditText name = diaView.findViewById(R.id.action_name);
         TagListView mExercisePartsTagListViewInDialog = (TagListView) diaView.findViewById(R.id.exercise_parts_tag_view_in_dialog);
-        mExercisePartsTagListViewInDialog.setTags(mExercisePartsTags);
-        final ArrayList<ExercisePart> exercisePartsTmp = new ArrayList<>();
+        List<Tag> mExercisePartsDialogTags =new ArrayList<>(mExercisePartsTags) ;
+        mExercisePartsTagListViewInDialog.setTags(mExercisePartsDialogTags);
+        mExercisePartsTagListViewInDialog.resetTagSelect();
+        final HashMap<Integer,ExercisePart> exercisePartsTmp = new HashMap<>();
         mExercisePartsTagListViewInDialog.setOnTagClickListener(new TagListView.OnTagClickListener() {
             @Override
             public void onTagClick(TagView tagView, Tag tag) {
@@ -174,15 +190,13 @@ public class NewActionActivity extends AppCompatActivity {
                     tag.setOr(false);
                     tagView.setBackgroundResource(R.drawable.tag_checked_normal);
                     Toast.makeText(getApplicationContext(),"您取消了"+tagView.getText().toString(), Toast.LENGTH_LONG).show();
-                    exercisePartsTmp.remove(
-                            DataSupport.find(ExercisePart.class,tag.getId(),true)
-                    );
+                    exercisePartsTmp.remove(tag.getId());
 
                 }else{
                     tag.setOr(true);
                     Toast.makeText(getApplicationContext(),tagView.getText().toString()+"id"+tag.getId(), Toast.LENGTH_LONG).show();
-                    exercisePartsTmp.add(
-                            DataSupport.find(ExercisePart.class,tag.getId(),true)
+                    exercisePartsTmp.put(
+                            tag.getId(),DataSupport.find(ExercisePart.class,tag.getId(),true)
                     );
 
                     tagView.setBackgroundResource(R.drawable.tag_checked_pressed);
@@ -197,13 +211,49 @@ public class NewActionActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 //这里写点击按钮后的逻辑代码
-                Action actionTmp = new Action(name.getText().toString(),exercisePartsTmp);
-                exercisePartsTmp.clear();
+                Action actionTmp = new Action(name.getText().toString(),(ArrayList<ExercisePart>) getListByMap(exercisePartsTmp,false));
+
+                for (ExercisePart exp :(ArrayList<ExercisePart>) getListByMap(exercisePartsTmp,false)){
+                    Log.d(TAG, "newAction: exercisePartsTmp"+exp);
+                }
 
                 actionTmp.save();
-                refreshView();
+                for (ExercisePart exercisePart :(ArrayList<ExercisePart>) getListByMap(exercisePartsTmp,false)){
+                    exercisePart.setActions(actionTmp);
+                    exercisePart.save();
+                }
+                exercisePartsTmp.clear();
+
+
+                setUpActionLayout();
             }
         });
         dialog.show();
+    }
+        /**
+     * 根据map返回key和value的list
+     *
+     * @param map
+     * @param isKey
+     *            true为key,false为value
+     * @return
+     */
+    public static List getListByMap(HashMap map,
+                                            boolean isKey) {
+        List  list = new ArrayList<>();
+
+        Iterator it = map.keySet().iterator();
+        while (it.hasNext()) {
+            Object key = it.next();
+            if (isKey) {
+                list.add(key);
+                Log.d(TAG, "getListByMap: add key " + key);
+            } else {
+                list.add(map.get(key));
+                Log.d(TAG, "getListByMap: add value "+ map.get(key));
+            }
+        }
+
+        return list;
     }
 }
