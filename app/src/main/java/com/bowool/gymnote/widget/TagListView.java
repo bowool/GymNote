@@ -72,6 +72,14 @@ public class TagListView extends FlowLayout implements OnClickListener {
 	private void init() {
 
 	}
+	
+	public void resetTagSelect(){
+        if (mTags != null ){
+            for (Tag tag :mTags){
+                tag.setOr(false);
+                }
+            }
+        }
 
 	private void inflateTagView(final Tag t, boolean b) {
 
