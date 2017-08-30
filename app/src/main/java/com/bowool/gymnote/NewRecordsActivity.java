@@ -69,7 +69,7 @@ public class NewRecordsActivity extends AppCompatActivity {
         String title = getString(R.string.trainning_day);
         int k = 0;
         for (int i :intent.getIntegerArrayListExtra("exercise_parts_today")){
-            exerciseParts.add(DataSupport.find(ExercisePart.class,i));
+            exerciseParts.add(DataSupport.find(ExercisePart.class,i,true));
             exerciseParts.get(k).setLastTrainDay(new Date());
             exerciseParts.get(k).save();
             title = title + exerciseParts.get(k).getPartName() + getString(R.string.separative_sign);
@@ -83,7 +83,7 @@ public class NewRecordsActivity extends AppCompatActivity {
         /*action list creator begin*/
         actionToday = new ArrayList<>();
         for (int i :intent.getIntegerArrayListExtra("actions_today")){
-            actionToday.add(DataSupport.find(Action.class,i));
+            actionToday.add(DataSupport.find(Action.class,i,true));
         }
         actionList =(ListView) findViewById(R.id.action_container);
         actionAdapter =new ActionAdapter(this ,R.layout.action_item,actionToday);
@@ -294,6 +294,7 @@ public class NewRecordsActivity extends AppCompatActivity {
         Snackbar.make(view, R.string.dialog_save_action_success, Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show();
 
+
     }
 
     double weightOfNewItem;
@@ -333,8 +334,6 @@ public class NewRecordsActivity extends AppCompatActivity {
             @Override
             public void onSelect(String text)
             {
-                Toast.makeText(NewRecordsActivity.this, "选择了 " + text + " 重",
-                        Toast.LENGTH_SHORT).show();
                 weightOfNewItem = Double.valueOf(text);
 
             }
@@ -352,8 +351,6 @@ public class NewRecordsActivity extends AppCompatActivity {
             @Override
             public void onSelect(String text)
             {
-                Toast.makeText(NewRecordsActivity.this, "选择了 " + text + " 组",
-                        Toast.LENGTH_SHORT).show();
                 timesOfNewItem = Integer.valueOf(text);
             }
         });

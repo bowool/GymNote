@@ -12,7 +12,7 @@ import java.util.Date;
  */
 
 public class ExercisePart extends DataSupport {
-    private ArrayList <Action> actions = new ArrayList<>();
+    private ArrayList <Action> actions;
     private String partName;
     private Date lastTrainDay;
     private int id;
@@ -22,16 +22,20 @@ public class ExercisePart extends DataSupport {
     }
 
     public ExercisePart(ArrayList<Action> actions, String partName) {
+        if(this.actions == null)
+            actions = new ArrayList<>();
         this.actions.addAll(actions);
         this.partName = partName;
     }
     public ExercisePart(Action action, String partName) {
+        if(this.actions == null)
+            actions = new ArrayList<>();
         this.actions .add(action);
         this.partName = partName;
     }
 
     public ArrayList<Action> getActions() {
-        return actions;
+        return actions == null ? new ArrayList<Action>() : actions;
     }
 
     public String getPartName() {
@@ -43,9 +47,13 @@ public class ExercisePart extends DataSupport {
     }
 
     public void setActions(ArrayList<Action> actions) {
+        if(this.actions == null)
+            actions = new ArrayList<>();
         this.actions.addAll(actions);
     }
     public void setActions(Action action){
+        if(this.actions == null)
+            actions = new ArrayList<>();
         this.actions.add(action);
     }
 
@@ -64,7 +72,7 @@ public class ExercisePart extends DataSupport {
     @Override
     public String toString() {
         return "ExercisePart{" +
-                "actions=" + actions.size() +
+                "actions=" + getActions().size() +
                 ", partName='" + partName + '\'' +
                 ", lastTrainDay=" + lastTrainDay +
                 ", id=" + id +
@@ -73,6 +81,8 @@ public class ExercisePart extends DataSupport {
 
     @Override
     public synchronized boolean save() {
+        Exception e = new Exception("gymnote");
+        e.printStackTrace();
         Log.d("ExercisePart", "save: " + this.toString());
         return super.save();
     }

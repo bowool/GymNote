@@ -24,7 +24,7 @@ public class Tag implements Serializable {
     }
 
     public void setOr(boolean or) {
-        Log.d("gymnote.NewActionActivity", "setOr: "+this.toString());
+        Log.d("gymnote.tag", "setOr: "+this.toString());
         this.or = or;
     }
 

@@ -14,10 +14,11 @@ public class ExerciseRecord extends DataSupport {
 
     public ExerciseRecord(Date trainDay) {
         this.trainDay = trainDay;
-        trainRecords = new ArrayList<>();
     }
 
     public void addTrainRecord(TrainRecord t){
+        if(this.trainRecords == null)
+            trainRecords = new ArrayList<>();
         trainRecords.add(t);
     }
 

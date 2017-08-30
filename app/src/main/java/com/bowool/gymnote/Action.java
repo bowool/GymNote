@@ -46,7 +46,7 @@ public class Action extends DataSupport {
 
     @Override
     public synchronized boolean save() {
-        Log.d("gymnote","save action base : "+this.toString());
+        Log.d("Action","save: "+this.toString());
         return super.save();
     }
 

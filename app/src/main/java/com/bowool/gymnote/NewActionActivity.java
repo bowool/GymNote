@@ -1,6 +1,7 @@
 package com.bowool.gymnote;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.GradientDrawable;
@@ -28,10 +29,12 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Set;
 
 public class NewActionActivity extends AppCompatActivity {
     static String TAG = "gymnote.NewAction";
@@ -56,7 +59,7 @@ public class NewActionActivity extends AppCompatActivity {
     }
 
     private void setUpExercisePartsLayout() {
-        ArrayList <ExercisePart> exerciseParts = new ArrayList<>(DataSupport.findAll(ExercisePart.class));
+        ArrayList <ExercisePart> exerciseParts = new ArrayList<>(DataSupport.findAll(ExercisePart.class,true));
         selectExerciseParts.clear();
         mExercisePartsTags.clear();
         for (ExercisePart exercisePart :exerciseParts){
@@ -76,12 +79,10 @@ public class NewActionActivity extends AppCompatActivity {
                 if(tag.getOr()==true){
                     tag.setOr(false);
                     tagView.setBackgroundResource(R.drawable.tag_checked_normal);
-                    Toast.makeText(getApplicationContext(),"您取消了"+tagView.getText().toString(), Toast.LENGTH_LONG).show();
                     selectExerciseParts.remove(tag.getId());
                     setUpActionLayout();
                 }else{
                     tag.setOr(true);
-                    Toast.makeText(getApplicationContext(),tagView.getText().toString()+"id"+tag.getId(), Toast.LENGTH_LONG).show();
                     selectExerciseParts.put(
                             tag.getId(),DataSupport.find(ExercisePart.class,tag.getId(),true)
                     );
@@ -89,6 +90,33 @@ public class NewActionActivity extends AppCompatActivity {
                     tagView.setChecked(true);
                     setUpActionLayout();
                 }
+            }
+        });
+
+        mExercisePartsTagListView.setmOnTagLongClickListener(new TagListView.OnTagLongClickListener() {
+            @Override
+            public void OnTagLongClickListener(TagView tagView, final Tag tag) {
+                AlertDialog.Builder builder2=new AlertDialog.Builder(NewActionActivity.this);
+                builder2.setMessage(getString(R.string.sure_to_delete,tag.getTitle()));
+                builder2.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+                    //正能量按钮 Positive
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //这里写点击按钮后的逻辑代码
+                        selectExerciseParts.remove(tag.getId());
+                        mExercisePartsTags.remove(tag);
+                        DataSupport.delete(ExercisePart.class,tag.getId());
+                        mExercisePartsTagListView.removeTag(tag);
+                    }
+                });
+                builder2.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                    //负能量按钮 NegativeButton
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                });
+                builder2.create().show();
+
             }
         });
 
@@ -114,14 +142,17 @@ public class NewActionActivity extends AppCompatActivity {
         }
 
     private void setUpActionLayout() {
-        ArrayList <Action> actions = new ArrayList<>();
+        final HashMap<Integer,Action> actions = new HashMap<>();
         mActionTags.clear();
         refreshSelectExerciseParts();
         for (ExercisePart select :(List<ExercisePart>) getListByMap(selectExerciseParts,false)){
-            actions.addAll(select.getActions());
-            Log.d(TAG, "setUpActionLayout: select :"+select);
+            for (Action act :select.getActions()){
+                actions.put(act.getId(),act);
+                Log.d(TAG, "setUpActionLayout: select :"+select+"add : "+act);
+            }
+
         }
-        for (Action action :actions){
+        for (Action action :(List<Action>)getListByMap(actions,false)){
             Tag tag = new Tag();
             tag.setId(action.getId());
             tag.setChecked(true);
@@ -142,17 +173,41 @@ public class NewActionActivity extends AppCompatActivity {
                 if(tag.getOr()==true){
                     tag.setOr(false);
                     tagView.setBackgroundResource(R.drawable.tag_checked_normal);
-                    Toast.makeText(getApplicationContext(),"您取消了"+tagView.getText().toString(), Toast.LENGTH_LONG).show();
                     selectActions.remove(tag.getId());
                 }else{
                     tag.setOr(true);
-                    Toast.makeText(getApplicationContext(),tagView.getText().toString()+"id"+tag.getId(), Toast.LENGTH_LONG).show();
                     tagView.setBackgroundResource(R.drawable.tag_checked_pressed);
                     selectActions.put(
                             tag.getId(),DataSupport.find(Action.class,tag.getId(),true)
                     );
                     tagView.setChecked(true);
                 }
+            }
+        });
+
+        mActionTagListView.setmOnTagLongClickListener(new TagListView.OnTagLongClickListener() {
+            @Override
+            public void OnTagLongClickListener(TagView tagView, final Tag tag) {
+                AlertDialog.Builder builder2=new AlertDialog.Builder(NewActionActivity.this);
+                builder2.setMessage(getString(R.string.sure_to_delete,tag.getTitle()));
+                builder2.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+                    //正能量按钮 Positive
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //这里写点击按钮后的逻辑代码
+                        selectActions.remove(tag.getId());
+                        mActionTags.remove(tag);
+                        DataSupport.delete(Action.class,tag.getId());
+                        mActionTagListView.removeTag(tag);
+                    }
+                });
+                builder2.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                    //负能量按钮 NegativeButton
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                });
+                builder2.create().show();
             }
         });
 
@@ -248,12 +303,10 @@ public class NewActionActivity extends AppCompatActivity {
                 if(tag.getOr()){
                     tag.setOr(false);
                     tagView.setBackgroundResource(R.drawable.tag_checked_normal);
-                    Toast.makeText(getApplicationContext(),"您取消了"+tagView.getText().toString(), Toast.LENGTH_LONG).show();
                     exercisePartsTmp.remove(tag.getId());
 
                 }else{
                     tag.setOr(true);
-                    Toast.makeText(getApplicationContext(),tagView.getText().toString()+"id"+tag.getId(), Toast.LENGTH_LONG).show();
                     exercisePartsTmp.put(
                             tag.getId(),DataSupport.find(ExercisePart.class,tag.getId(),true)
                     );
@@ -264,6 +317,8 @@ public class NewActionActivity extends AppCompatActivity {
             }
         });
 
+
+
         //TODO: not finished
         dialog.setView(diaView);
         dialog.setPositiveButton(getString(R.string.finished), new DialogInterface.OnClickListener() {
@@ -272,12 +327,9 @@ public class NewActionActivity extends AppCompatActivity {
                 //这里写点击按钮后的逻辑代码
                 Action actionTmp = new Action(name.getText().toString(),(ArrayList<ExercisePart>) getListByMap(exercisePartsTmp,false));
 
-                for (ExercisePart exp :(ArrayList<ExercisePart>) getListByMap(exercisePartsTmp,false)){
-                    Log.d(TAG, "newAction: exercisePartsTmp"+exp);
-                }
-
                 actionTmp.save();
                 for (ExercisePart exercisePart :(ArrayList<ExercisePart>) getListByMap(exercisePartsTmp,false)){
+                    Log.d(TAG, "newAction: exercisePartsTmp"+exercisePart);
                     exercisePart.setActions(actionTmp);
                     exercisePart.save();
                 }

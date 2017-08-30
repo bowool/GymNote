@@ -1,6 +1,4 @@
-/**
- * 
- */
+
 package com.bowool.gymnote.widget;
 
 import android.content.Context;
@@ -20,14 +18,15 @@ import java.util.List;
  * @author kince
  * 
  */
-public class TagListView extends FlowLayout implements OnClickListener {
+public class TagListView extends FlowLayout implements OnClickListener ,View.OnLongClickListener {
 
     private boolean mIsDeleteMode;
     private OnTagCheckedChangedListener mOnTagCheckedChangedListener;
     private OnTagClickListener mOnTagClickListener;
+    private OnTagLongClickListener mOnTagLongClickListener;
     private int mTagViewBackgroundResId;
     private int mTagViewTextColorResId;
-    private final List<Tag> mTags = new ArrayList<Tag>();
+    private final List<Tag> mTags = new ArrayList<>();
 
     /**
      * @param context
@@ -68,6 +67,18 @@ public class TagListView extends FlowLayout implements OnClickListener {
             }
         }
     }
+    @Override
+    public boolean onLongClick(View v) {
+        if ((v instanceof TagView)) {
+            Tag localTag = (Tag) v.getTag();
+            if (this.mOnTagLongClickListener != null) {
+                this.mOnTagLongClickListener.OnTagLongClickListener((TagView) v, localTag);
+            }
+        }
+        return true;
+    }
+
+
 
     private void init() {
 
@@ -137,6 +148,7 @@ public class TagListView extends FlowLayout implements OnClickListener {
                     t.getLeftDrawableResId(), 0, t.getRightDrawableResId(), 0);
         }
         localTagView.setOnClickListener(this);
+        localTagView.setOnLongClickListener(this);
         localTagView
                 .setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     public void onCheckedChanged(
@@ -227,12 +239,20 @@ public class TagListView extends FlowLayout implements OnClickListener {
         }
     }
 
+    public void setmOnTagLongClickListener(OnTagLongClickListener mOnTagLongClickListener) {
+        this.mOnTagLongClickListener = mOnTagLongClickListener;
+    }
+
+
     public static abstract interface OnTagCheckedChangedListener {
         public abstract void onTagCheckedChanged(TagView tagView, Tag tag);
     }
 
     public static abstract interface OnTagClickListener {
         public abstract void onTagClick(TagView tagView, Tag tag);
+    }
+    public static abstract interface OnTagLongClickListener {
+        public abstract void OnTagLongClickListener(TagView tagView, Tag tag);
     }
 
 }
